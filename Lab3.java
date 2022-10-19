@@ -1,10 +1,16 @@
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class Lab3 {
 
     public static void main(String[] args) {
+
+        int solutionOne = questionOne();
+        if (solutionOne < 0)
+            System.exit(1);
+        System.out.println("There are " + solutionOne + " total number of Autonomous Systems.");
 
     }//end main
 
@@ -15,6 +21,8 @@ public class Lab3 {
 
             FileReader reader = new FileReader("data/lab3Data.txt");
             Scanner fileParser = new Scanner(reader);
+            HashMap<String,Boolean> countAS = new HashMap<>();
+
             while (fileParser.hasNextLine()) {
 
                 String line = fileParser.nextLine();
@@ -23,18 +31,25 @@ public class Lab3 {
                 String provider = lineParser.next();
                 String customer = lineParser.next();
 
+                if (countAS.get(provider) == null) {
+                    countAS.put(provider,true);
+                }//end if
+                if(countAS.get(customer) == null) {
+                    countAS.put(customer,true);
+                }
 
             }//end while
 
+            return countAS.size();
 
-        }
+        }//end try block
         catch (FileNotFoundException fnf) {
 
             System.out.println(fnf.getMessage());
 
         }
 
-        return 1;
+        return -1;
 
     }//end questionOne
 
