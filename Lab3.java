@@ -1,5 +1,6 @@
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -22,12 +23,13 @@ public class Lab3 {
             FileReader reader = new FileReader("data/lab3Data.txt");
             Scanner fileParser = new Scanner(reader);
             HashMap<String,Boolean> countAS = new HashMap<>();
+            fileParser.nextLine();
 
             while (fileParser.hasNextLine()) {
 
                 String line = fileParser.nextLine();
                 Scanner lineParser = new Scanner(line);
-                lineParser.useDelimiter("|");
+                lineParser.useDelimiter("\\|");
                 String provider = lineParser.next();
                 String customer = lineParser.next();
 
@@ -39,14 +41,15 @@ public class Lab3 {
                 }
 
             }//end while
-
+            reader.close();
             return countAS.size();
 
         }//end try block
         catch (FileNotFoundException fnf) {
-
             System.out.println(fnf.getMessage());
-
+        }
+        catch (IOException ioe) {
+            System.out.println(ioe.getMessage());
         }
 
         return -1;
