@@ -1,15 +1,38 @@
-import java.awt.desktop.FilesEvent;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.concurrent.atomic.AtomicReferenceArray;
+import java.util.*;
+class Node implements Comparable<Node> {
 
+    String name;
+    int links;
+    public Node(String name, int links) {
+        this.name = name;
+        this.links = links;
+    }
+
+    public int compareTo(Node otherNode) {
+
+        if(this.links < otherNode.links) {
+            return 1;
+        }
+        else if (this.links > otherNode.links) {
+            return -1;
+        }
+        else
+            return 0;
+    }//end if
+
+}
+
+class NodeComparator implements Comparator<Node> {
+
+
+    @Override
+    public int compare(Node node, Node t1) {
+            return node.compareTo(t1);
+    }
+}
 public class Lab3 {
 
     public static void main(String[] args) {
@@ -25,6 +48,12 @@ public class Lab3 {
         ArrayList<Integer> solutionThree = questionThree();
         System.out.println("The number of p2p relationsihps are: " + solutionThree.get(0));
         System.out.println("The number of c2p relationships are : " + solutionThree.get(1));
+
+        ArrayList<String> solutionFour = questionFour();
+        System.out.println("Top ten systms are: ");
+        for (int i = 0; i < 10; i++) {
+            System.out.println(solutionFour.get(i));
+        }
 
     }//end main
 
@@ -164,10 +193,68 @@ public class Lab3 {
     }//end questionThree
 
 
-    private static void questionFour() {
+    private static ArrayList<String> questionFour() {
+
+        ArrayList<String> topTenNodes = new ArrayList<>();
+        HashMap<String,Integer> countMap = new HashMap<>();
+
+        try {
+
+                FileReader reader = new FileReader("./data/lab3Data.txt");
+                Scanner fileParser = new Scanner(reader);
+                fileParser.nextLine();
+                while (fileParser.hasNextLine()) {
+
+                    String line = fileParser.nextLine();
+                    Scanner lineParser = new Scanner(line);
+                    lineParser.useDelimiter("\\|");
+                    String asOne = lineParser.next();
+                    String asTwo = lineParser.next();
+                    if (countMap.get(asOne) == null) {
+                        countMap.put(asOne,1);
+                    }//end if
+                    else {
+                        countMap.put(asOne,countMap.get(asOne) + 1);
+
+                    }
+                    if (countMap.get(asTwo) == null) {
+                        countMap.put(asTwo,1);
+                    }
 
 
+                }//end while
 
+                Set<String> keys = countMap.keySet();
+                PriorityQueue<Node> sortQueue = new PriorityQueue<>(new NodeComparator());
+
+                for (String key: keys) {
+                    Node localNode = new Node(key,countMap.get(key));
+                    sortQueue.add(localNode);
+                }//end for
+
+                for (int i = 0; i < 10 ; i++) {
+                    Node localNode = sortQueue.remove();
+                    topTenNodes.add(localNode.name);
+                }
+                reader.close();
+                return topTenNodes;
+            }//end try
+            catch (FileNotFoundException fnf) {
+
+                System.out.println(fnf.getMessage());
+
+            }//end catch
+            catch (IOException ioe) {
+
+                System.out.println(ioe.getMessage());
+
+            }
+            catch (NullPointerException npe) {
+
+                System.out.println(npe.getMessage());
+
+            }//end catch
+            return topTenNodes;
     }//end questionFour
 
 }//end class
