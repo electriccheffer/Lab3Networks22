@@ -219,6 +219,8 @@ public class Lab3 {
                     }
                     if (countMap.get(asTwo) == null) {
                         countMap.put(asTwo,1);
+                    } else if (countMap.get(asTwo) != null) {
+                        countMap.put(asTwo,countMap.get(asTwo) + 1);
                     }
 
 
@@ -256,5 +258,59 @@ public class Lab3 {
             }//end catch
             return topTenNodes;
     }//end questionFour
+
+
+    public static ArrayList<String> questionFive() {
+
+            ArrayList<String> topTen = new ArrayList<>();
+            try {
+                FileReader reader = new FileReader("./data/Lab3Data.txt");
+                Scanner fileParser = new Scanner(reader);
+                fileParser.nextLine();
+                HashMap<String,Integer> countMap = new HashMap<>();
+
+                while(fileParser.hasNextLine()) {
+
+                    String line = fileParser.nextLine();
+
+                    Scanner lineParser = new Scanner(line);
+                    lineParser.useDelimiter("\\|");
+
+                    String provider = lineParser.next();
+                    String customer = lineParser.next();
+                    String systemType = lineParser.next();
+                    if (systemType.equals("-1")) {
+                        if (countMap.get(provider) == null)
+                            countMap.put(provider,1);
+                        else
+                            countMap.put(provider,countMap.get(provider) + 1);
+                        if(countMap.get(customer) == null)
+                            countMap.put(customer,1);
+                        else
+                            countMap.put(customer,countMap.get(customer) + 1);
+                    }//end if
+                    else
+                        continue;
+
+                }//end while
+
+                Set<String> keySet = countMap.keySet();
+                PriorityQueue<Node> topTenQueue = new PriorityQueue<>(new NodeComparator());
+                for (String key: keySet) {
+                    Node tmpNode = new Node(key,countMap.get(key))
+                    topTenQueue.add(tmpNode);
+                }//end for
+
+                for (int i = 0; i < 10; i++) {
+                    topTen.add(topTenQueue.remove().name);
+                }//end for
+
+                return topTen;
+            } //end try
+            catch (FileNotFoundException fnf) {
+                System.out.println(fnf.getMessage());
+            }
+    } //end questionFive
+
 
 }//end class
