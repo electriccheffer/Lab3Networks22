@@ -63,6 +63,7 @@ public class Lab3 {
         }//end for
 
         ArrayList<String> solutionSix = questionSix();
+        System.out.println("Top ten Peer-To-Peer Systems are:");
         for (String nodName: solutionSix) {
             System.out.println(nodName);
         }//end for
@@ -341,10 +342,13 @@ public class Lab3 {
             FileReader reader = new FileReader("./data/lab3Data.txt");
             Scanner fileParser = new Scanner(reader);
             fileParser.nextLine();
+
             while (fileParser.hasNextLine()) {
 
                 String line = fileParser.nextLine();
                 Scanner lineParser = new Scanner(line);
+                lineParser.useDelimiter("\\|");
+
                 String peerOne = lineParser.next();
                 String peerTwo = lineParser.next();
                 String relationship = lineParser.next();
