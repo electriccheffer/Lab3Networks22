@@ -1,3 +1,4 @@
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -60,6 +61,13 @@ public class Lab3 {
         for (String nodeName : solutionFive) {
             System.out.println(nodeName);
         }//end for
+
+        ArrayList<String> solutionSix = questionSix();
+        for (String nodName: solutionSix) {
+            System.out.println(nodName);
+        }//end for
+
+
     }//end main
 
 
@@ -321,6 +329,68 @@ public class Lab3 {
             return topTen;
 
     } //end questionFive
+
+    public static ArrayList<String> questionSix() {
+
+        ArrayList<String> topTen = new ArrayList<>();
+        HashMap<String,Integer> countMap = new HashMap<>();
+        PriorityQueue<Node> topTenQueue = new PriorityQueue<>(new NodeComparator());
+
+        try {
+
+            FileReader reader = new FileReader("./data/lab3Data.txt");
+            Scanner fileParser = new Scanner(reader);
+            fileParser.nextLine();
+            while (fileParser.hasNextLine()) {
+
+                String line = fileParser.nextLine();
+                Scanner lineParser = new Scanner(line);
+                String peerOne = lineParser.next();
+                String peerTwo = lineParser.next();
+                String relationship = lineParser.next();
+
+                if (relationship.equals("0")) {
+
+                    if (countMap.get(peerOne) == null)
+                        countMap.put(peerOne,1);
+                    else
+                        countMap.put(peerOne,countMap.get(peerOne) + 1);
+                    if (countMap.get(peerTwo) == null)
+                        countMap.put(peerTwo,1);
+                    else
+                        countMap.put(peerTwo,countMap.get(peerTwo) + 1);
+
+                }//end if
+
+            }//end while
+
+            Set<String> keySet = countMap.keySet();
+            for (String key : keySet) {
+                topTenQueue.add(new Node(key,countMap.get(key)));
+            }//end for
+
+            for (int i = 0; i < 10; i++) {
+                topTen.add(topTenQueue.remove().name);
+            }//end for
+
+            reader.close();
+            return topTen;
+
+        }//end try
+        catch (FileNotFoundException fnf) {
+
+            System.out.println(fnf.getMessage());
+
+        }//end catch
+        catch (IOException ioe) {
+
+            System.out.println(ioe.getMessage());
+
+        }//end catch
+
+        return topTen;
+    }//end questionSix
+
 
 
 }//end class
