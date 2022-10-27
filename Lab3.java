@@ -74,7 +74,11 @@ public class Lab3 {
             System.out.println(nodeName);
         }//end for
 
-
+        ArrayList<String> solutionEight = questionEight();
+        System.out.println("The number of stub ASes are: ");
+        for (String stub: solutionEight) {
+            System.out.println(stub);
+        }
     }//end main
 
 
@@ -469,5 +473,64 @@ public class Lab3 {
 
     }//end questionSeven
 
+
+    public static ArrayList<String> questionEight() {
+
+        HashMap<String,Boolean> nodeMap = new HashMap<>();
+
+        try {
+
+            FileReader reader = new FileReader("./data/lab3Data.txt");
+            Scanner fileParser = new Scanner(reader);
+            fileParser.nextLine();
+
+            while(fileParser.hasNextLine()) {
+
+                String line = fileParser.nextLine();
+                Scanner lineParser = new Scanner(line);
+                lineParser.useDelimiter("\\|");
+
+                String asOne = lineParser.next();
+                String asTwo = lineParser.next();
+                if (nodeMap.get(asOne) == null)
+                    nodeMap.put(asOne,true);
+                if (nodeMap.get(asTwo) == null)
+                    nodeMap.put(asTwo,true);
+
+            }//end while
+
+            reader.close();
+
+            reader = new FileReader("./data/lab3Data.txt");
+            fileParser = new Scanner(reader);
+            fileParser.nextLine();
+            while (fileParser.hasNextLine()) {
+
+                String line = fileParser.nextLine();
+                Scanner lineParser = new Scanner(line);
+                lineParser.useDelimiter("\\|");
+                String asOne = lineParser.next();
+                lineParser.next();
+                String relationship = lineParser.next();
+
+                if (nodeMap.get(asOne) != null && relationship.equals("-1"))
+                    nodeMap.remove(asOne);
+
+            }//end while
+
+            ArrayList<String> stubs = new ArrayList<>(nodeMap.keySet());
+            return stubs;
+
+        }//end try
+        catch (FileNotFoundException fnf) {
+            System.out.println(fnf.getMessage());
+        }//end catch
+        catch (IOException ioe) {
+            System.out.println(ioe.getMessage());
+        }
+
+        return new ArrayList<String>();
+
+    }//end questionEight
 
 }//end class
