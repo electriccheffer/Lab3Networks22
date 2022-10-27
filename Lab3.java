@@ -68,6 +68,12 @@ public class Lab3 {
             System.out.println(nodName);
         }//end for
 
+        ArrayList<String> solutionSeven = questionSeven();
+        System.out.println("The number of tier one providers are: ");
+        for (String nodeName : solutionSeven) {
+            System.out.println(nodeName);
+        }//end for
+
 
     }//end main
 
@@ -395,6 +401,73 @@ public class Lab3 {
         return topTen;
     }//end questionSix
 
+
+    public static ArrayList<String> questionSeven() {
+
+        HashMap<String,Boolean> nodeMap = new HashMap<>();
+
+        try {
+
+            FileReader reader = new FileReader("./data/lab3Data.txt");
+            Scanner fileParser = new Scanner(reader);
+            fileParser.nextLine();
+            while (fileParser.hasNextLine()) {
+
+                String line = fileParser.nextLine();
+                Scanner lineParser = new Scanner(line);
+                lineParser.useDelimiter("\\|");
+
+                String asOne = lineParser.next();
+                String asTwo = lineParser.next();
+                String relationship = lineParser.next();
+
+                if (nodeMap.get(asOne) == null)
+                    nodeMap.put(asOne,true);
+                if (nodeMap.get(asTwo) == null)
+                    nodeMap.put(asTwo,true);
+
+            }//end while
+            reader.close();
+
+            FileReader secondRead = new FileReader("./data/lab3Data.txt");
+            Scanner fileParserTwo = new Scanner(secondRead);
+            fileParserTwo.nextLine();
+            while (fileParserTwo.hasNextLine()) {
+
+                String line = fileParserTwo.nextLine();
+                Scanner lineParser = new Scanner(line);
+                lineParser.useDelimiter("\\|");
+
+                String asOne = lineParser.next();
+                String asTwo = lineParser.next();
+                String relationship = lineParser.next();
+
+                if(relationship.equals("-1") && nodeMap.get(asTwo) != null)
+                    nodeMap.remove(asTwo);
+
+            }//end while
+
+            secondRead.close();
+
+            ArrayList<String> tierOneSystems = new ArrayList<>(nodeMap.keySet());
+
+            return tierOneSystems;
+
+        }//end try
+        catch (FileNotFoundException fnf) {
+
+            System.out.println(fnf.getMessage());
+
+        }
+        catch (IOException ioe) {
+
+            System.out.println(ioe.getMessage());
+
+        }
+
+        return new ArrayList<String>();
+
+    }//end questionSeven
 
 
 }//end class
