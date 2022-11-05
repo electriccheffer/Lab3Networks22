@@ -452,7 +452,9 @@ public class Lab3 {
                 lineParser.useDelimiter("\\|");
                 lineParser.next();
                 String customer = lineParser.next();
-                if(countMap.get(customer) != null) {
+                String relation = lineParser.next();
+
+                if(countMap.get(customer) != null && relation.equals("-1")) {
                     countMap.remove(customer);
                 }//end if
 
