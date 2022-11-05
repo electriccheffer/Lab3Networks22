@@ -68,17 +68,15 @@ public class Lab3 {
             System.out.println(nodName);
         }//end for
 
-        ArrayList<String> solutionSeven = questionSeven();
-        System.out.println("The number of tier one providers are: ");
-        for (String nodeName : solutionSeven) {
-            System.out.println(nodeName);
+        ArrayList<Node> solutionSeven = questionSeven();
+        System.out.println("The top ten tier one providers are: ");
+        for (Node nodeName : solutionSeven) {
+            System.out.println(nodeName.name + " has " + nodeName.links + " total links.");
         }//end for
 
         ArrayList<String> solutionEight = questionEight();
         System.out.println("The number of stub ASes are: ");
-        for (String stub: solutionEight) {
-            System.out.println(stub);
-        }
+        System.out.println(solutionEight.size());
     }//end main
 
 
@@ -283,7 +281,6 @@ public class Lab3 {
             return topTenNodes;
     }//end questionFour
 
-
     public static ArrayList<String> questionFive() {
 
             ArrayList<String> topTen = new ArrayList<>();
@@ -406,56 +403,75 @@ public class Lab3 {
     }//end questionSix
 
 
-    public static ArrayList<String> questionSeven() {
+    public static ArrayList<Node> questionSeven() {
 
-        HashMap<String,Boolean> nodeMap = new HashMap<>();
+        HashMap<String,Integer> countMap = new HashMap<>();
 
         try {
-
+            //count the number of links for each AS
             FileReader reader = new FileReader("./data/lab3Data.txt");
             Scanner fileParser = new Scanner(reader);
             fileParser.nextLine();
+
             while (fileParser.hasNextLine()) {
 
                 String line = fileParser.nextLine();
                 Scanner lineParser = new Scanner(line);
                 lineParser.useDelimiter("\\|");
+                String fieldOne = lineParser.next();
+                String fieldTwo = lineParser.next();
 
-                String asOne = lineParser.next();
-                String asTwo = lineParser.next();
-                String relationship = lineParser.next();
+                // if not in the map initialize count
+                if (countMap.get(fieldOne) == null) {
+                    countMap.put(fieldOne,1);
+                }//end if
+                else {
 
-                if (nodeMap.get(asOne) == null)
-                    nodeMap.put(asOne,true);
-                if (nodeMap.get(asTwo) == null)
-                    nodeMap.put(asTwo,true);
+                    countMap.put(fieldOne,countMap.get(fieldOne) + 1);
+                }//end else
+                if (countMap.get(fieldTwo) == null) {
+                    countMap.put(fieldTwo,1);
+                }//end if
+                else {
+                    countMap.put(fieldTwo,countMap.get(fieldTwo) + 1);
+                }//end else
 
             }//end while
+
+            fileParser.close();
             reader.close();
 
-            FileReader secondRead = new FileReader("./data/lab3Data.txt");
-            Scanner fileParserTwo = new Scanner(secondRead);
-            fileParserTwo.nextLine();
-            while (fileParserTwo.hasNextLine()) {
+            //remove any nodes which are a customer
+            FileReader reader2 = new FileReader("./data/lab3Data.txt");
+            Scanner fileParser2 = new Scanner(reader2);
+            fileParser2.nextLine();
+            while(fileParser2.hasNextLine()) {
 
-                String line = fileParserTwo.nextLine();
+                String line = fileParser2.nextLine();
                 Scanner lineParser = new Scanner(line);
                 lineParser.useDelimiter("\\|");
-
-                String asOne = lineParser.next();
-                String asTwo = lineParser.next();
-                String relationship = lineParser.next();
-
-                if(relationship.equals("-1") && nodeMap.get(asTwo) != null)
-                    nodeMap.remove(asTwo);
+                lineParser.next();
+                String customer = lineParser.next();
+                if(countMap.get(customer) != null) {
+                    countMap.remove(customer);
+                }//end if
 
             }//end while
 
-            secondRead.close();
+            //place into a priority heap
+            Set<String> keySet = countMap.keySet();
+            PriorityQueue<Node> sortHeap = new PriorityQueue<>(new NodeComparator());
 
-            ArrayList<String> tierOneSystems = new ArrayList<>(nodeMap.keySet());
+            for (String key : keySet) {
+                sortHeap.add(new Node(key,countMap.get(key)));
+            }
+            ArrayList<Node> topTenTierOne = new ArrayList<>();
 
-            return tierOneSystems;
+            for (int i = 0; i < 10; i++) {
+                topTenTierOne.add(sortHeap.remove());
+            }//end for
+
+            return topTenTierOne;
 
         }//end try
         catch (FileNotFoundException fnf) {
@@ -469,7 +485,7 @@ public class Lab3 {
 
         }
 
-        return new ArrayList<String>();
+        return new ArrayList<Node>();
 
     }//end questionSeven
 
